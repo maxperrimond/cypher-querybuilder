@@ -3,6 +3,7 @@
 namespace MP\Cypher\Query;
 
 use MP\Cypher\Query;
+use MP\Cypher\QueryBuilderException;
 
 class Node extends Query
 {
@@ -39,10 +40,14 @@ class Node extends Query
      * @param array             $properties
      *
      * @return Relation
+     *
+     * @throws QueryBuilderException
      */
     public function relation($alias = null, $type = null, array $properties = [])
     {
-        // TODO: check if already have a node
+        if (!empty($this->parts)) {
+            throw QueryBuilderException::relationAlreadyDefined();
+        }
 
         $this->addPart($relation = new Relation($alias, $type, $properties));
 
@@ -55,10 +60,14 @@ class Node extends Query
      * @param array             $properties
      *
      * @return Node
+     *
+     * @throws QueryBuilderException
      */
     public function node($alias = null, $type = null, array $properties = [])
     {
-        // TODO: check if already have a relation
+        if (!empty($this->parts)) {
+            throw QueryBuilderException::relationAlreadyDefined();
+        }
 
         $this->addPart($node = new Node($alias, $type, $properties));
 

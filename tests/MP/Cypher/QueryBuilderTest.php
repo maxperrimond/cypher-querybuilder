@@ -3,6 +3,7 @@
 namespace Tests\MP\Cypher;
 
 use MP\Cypher\Query\Match;
+use MP\Cypher\Query\Node;
 use MP\Cypher\Query\OptionalMatch;
 use MP\Cypher\Query\Relation;
 use MP\Cypher\Query\Where;
@@ -69,5 +70,15 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $qb->skip(10);
 
         $this->assertEquals("MATCH (u:user {id:'foo'})-[]-(n) WHERE n.name = 'foo' RETURN u,n SKIP 10 LIMIT 100", $qb->getQuery('u', 'n'));
+    }
+
+    /**
+     * @expectedException \MP\Cypher\QueryBuilderException
+     */
+    public function testNodeException()
+    {
+        $node = new Node();
+        $node->relation();
+        $node->relation();
     }
 }
