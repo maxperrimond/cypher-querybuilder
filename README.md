@@ -1,5 +1,7 @@
 # PHP Cypher QueryBuilder
 
+[![Build Status](https://travis-ci.com/maxperrimond/cypher-querybuilder.svg?token=txabW3XnmBRNYuhMQNLm&branch=master)](https://travis-ci.com/maxperrimond/cypher-querybuilder)
+
 A php query builder for cypher queries.
 
 *WORK IN PROGRESS*
