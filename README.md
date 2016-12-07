@@ -8,7 +8,7 @@ A php query builder for cypher queries.
 
 ## Installation
 
-    $ composer require maxperrimond/cypher-querybuilder
+    $ composer require mper/cypher-querybuilder
 
 ## Usage
 
