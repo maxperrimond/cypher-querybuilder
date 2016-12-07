@@ -12,13 +12,13 @@
 
     <testsuites>
         <testsuite name="Cypher QueryBuilder Test Suite">
-            <directory>./tests/MP/Cypher/</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 
     <filter>
         <whitelist>
-            <directory suffix=".php">./lib/MP/Cypher</directory>
+            <directory suffix=".php">./lib</directory>
         </whitelist>
     </filter>
 

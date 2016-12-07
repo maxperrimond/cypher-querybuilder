@@ -16,12 +16,11 @@
         "phpunit/phpunit": "5.7.*"
     },
     "autoload": {
-        "psr-4": { "": "lib/" }
+        "psr-4": { "MP\\Cypher\\": "lib/" }
     },
     "autoload-dev": {
-        "psr-4": { "": "tests/" }
+        "psr-4": { "MP\\Cypher\\": "tests/" }
     },
-    "target-dir" : "MP/cypher-querybuilder",
     "extra" : {
         "branch-alias" : {
             "dev-master" : "master-dev"
