@@ -3,12 +3,15 @@
 namespace MP\Cypher\Query;
 
 use MP\Cypher\Query;
+use MP\Cypher\QueryBuilderException;
 
 class Relation extends Query
 {
     const LEFT = 'left';
     const RIGHT = 'right';
     const OMNI = 'omni';
+
+    const RANGE_PATTERN = '^\*([0-9]+(\.{2}([0-9]+)?)?)?$';
 
     /**
      * @var null|string
@@ -28,12 +31,12 @@ class Relation extends Query
     /**
      * @var string
      */
-    public $way = self::OMNI;
+    public $direction = self::OMNI;
 
     /**
      * @var string
      */
-    public $length;
+    public $range;
 
     /**
      * @param string|null       $alias
@@ -53,10 +56,14 @@ class Relation extends Query
      * @param array             $properties
      *
      * @return Node
+     *
+     * @throws QueryBuilderException
      */
     public function node($alias = null, $type = null, array $properties = [])
     {
-        // TODO: throw if already have node
+        if (!empty($this->parts)) {
+            throw QueryBuilderException::nodeAlreadyDefined();
+        }
 
         $this->addPart($node = new Node($alias, $type, $properties));
 
@@ -64,31 +71,49 @@ class Relation extends Query
     }
 
     /**
-     * @param string $way
-     *
      * @return Relation
      */
-    public function setWay($way)
+    public function right()
     {
-        if (!in_array($way, [self::LEFT, self::RIGHT, self::OMNI])) {
-            // TODO: throw error
-        }
-
-        $this->way = $way;
+        $this->direction = self::RIGHT;
 
         return $this;
     }
 
     /**
-     * @param string $length
-     *
      * @return Relation
      */
-    public function pathLength($length)
+    public function left()
     {
-        // TODO: check pattern
+        $this->direction = self::LEFT;
 
-        $this->length = $length;
+        return $this;
+    }
+
+    /**
+     * @return Relation
+     */
+    public function omni()
+    {
+        $this->direction = self::OMNI;
+
+        return $this;
+    }
+
+    /**
+     * @param string $range
+     *
+     * @return Relation
+     *
+     * @throws QueryBuilderException
+     */
+    public function setRange($range)
+    {
+        if (!preg_match('/' . self::RANGE_PATTERN . '/', $range)) {
+            throw QueryBuilderException::invalidRangePattern();
+        }
+
+        $this->range = $range;
 
         return $this;
     }
@@ -119,9 +144,9 @@ class Relation extends Query
             $query .= sprintf(' {%s}', implode(',', $properties));
         }
 
-        $query = "[$query{$this->length}]";
+        $query = "[$query{$this->range}]";
 
-        switch ($this->way) {
+        switch ($this->direction) {
             case self::RIGHT:
                 $query = "-$query->";
                 break;
@@ -132,11 +157,14 @@ class Relation extends Query
                 $query = "-$query-";
                 break;
             default:
-                // TODO: throw
+                throw QueryBuilderException::invalidRelationDirection();
         }
 
         if (!empty($this->parts)) {
-            $query .= "{$this->parts[0]->getQuery()}";
+            /** @var Node $part */
+            $part = current($this->parts);
+
+            $query .= "{$part->getQuery()}";
         }
 
         return $query;

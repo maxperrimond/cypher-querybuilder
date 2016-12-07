@@ -103,12 +103,12 @@ class Node extends Query
         $query = "($query)";
 
         if (!empty($this->parts)) {
-            $nextPart = $this->parts[0];
+            $part = $this->parts[0];
 
-            if ($nextPart instanceof Relation) {
-                $query .= "{$nextPart->getQuery()}";
-            } elseif ($nextPart instanceof Node) {
-                $query .= "-->{$nextPart->getQuery()}";
+            if ($part instanceof Relation) {
+                $query .= "{$part->getQuery()}";
+            } elseif ($part instanceof Node) {
+                $query .= "-->{$part->getQuery()}";
             }
         }
 

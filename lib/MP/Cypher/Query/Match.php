@@ -13,7 +13,7 @@ class Match extends Query
      *
      * @return Node
      */
-    public function node($alias = null, $type = null, array $properties = [])
+    public function addNode($alias = null, $type = null, array $properties = [])
     {
         $this->addPart($node = new Node($alias, $type, $properties));
 

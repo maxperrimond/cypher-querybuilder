@@ -10,30 +10,50 @@ class OrderBy extends Query
     const ASC = 'ASC';
 
     /**
-     * @var string|array
-     */
-    private $field;
-
-    /**
      * @var string
      */
     private $order;
 
     /**
-     * @param string|array $field
-     * @param string       $order
+     * @param string $field
+     *
+     * @return OrderBy
      */
-    public function __construct($field, $order = null)
+    public function addField($field)
     {
-        $this->field = $field;
-        $this->order = $order;
+        $this->addPart($field);
+
+        return $this;
     }
 
+    /**
+     * @return OrderBy
+     */
+    public function desc()
+    {
+        $this->order = self::DESC;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderBy
+     */
+    public function asc()
+    {
+        $this->order = self::ASC;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getQuery()
     {
-        $field = (is_array($this->field)) ? implode(',', $this->field) : $this->field;
+        $fields = parent::getQuery();
 
-        $query = "ORDER BY $field";
+        $query = "ORDER BY $fields";
 
         if ($this->order) {
             $query .= " $this->order";

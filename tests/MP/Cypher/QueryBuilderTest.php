@@ -24,15 +24,15 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $match = new Match();
 
         $match
-            ->node('u', 'user')
-            ->relation('m', 'member')->setWay(Relation::RIGHT)
+            ->addNode('u', 'user')
+            ->relation('m', 'member')->right()
             ->node(null, 'lot')
-            ->relation(null, 'parent')->pathLength('*0..')
+            ->relation(null, 'parent')->setRange('*3')
             ->node(null, 'lot', [
                 'id' => 'toto',
             ]);
 
-        $this->assertEquals("MATCH (u:user)-[m:member]->(:lot)-[:parent*0..]-(:lot {id:'toto'})", $match->getQuery());
+        $this->assertEquals("MATCH (u:user)-[m:member]->(:lot)-[:parent*3]-(:lot {id:'toto'})", $match->getQuery());
     }
 
     public function testOptionalMatchQueryBuilder()
@@ -40,15 +40,15 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $match = new OptionalMatch();
 
         $match
-            ->node('u', 'user')
-            ->relation('m', 'member')->setWay(Relation::RIGHT)
+            ->addNode('u', 'user')
+            ->relation('m', 'member')->right()
             ->node(null, 'lot')
-            ->relation(null, 'parent')->pathLength('*0..')
+            ->relation(null, 'parent')->setRange('*2')
             ->node(null, 'lot', [
                 'id' => 'toto',
             ]);
 
-        $this->assertEquals("OPTIONAL MATCH (u:user)-[m:member]->(:lot)-[:parent*0..]-(:lot {id:'toto'})", $match->getQuery());
+        $this->assertEquals("OPTIONAL MATCH (u:user)-[m:member]->(:lot)-[:parent*2]-(:lot {id:'toto'})", $match->getQuery());
     }
 
     public function testWhereQueryBuilder()
@@ -64,12 +64,23 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $qb = new QueryBuilder();
 
-        $qb->addMatch()->node('u', 'user', ['id' => 'foo'])->relation()->node('n');
+        $qb->addMatch()->addNode('u', 'user', ['id' => 'foo'])->relation()->node('n');
         $qb->where()->expr("n.name = 'foo'");
+        $qb->orderBy()->addField('n.id')->addField('n.created_at')->desc();
         $qb->limit(100);
         $qb->skip(10);
 
-        $this->assertEquals("MATCH (u:user {id:'foo'})-[]-(n) WHERE n.name = 'foo' RETURN u,n SKIP 10 LIMIT 100", $qb->getQuery('u', 'n'));
+        $this->assertEquals("MATCH (u:user {id:'foo'})-[]-(n) WHERE n.name = 'foo' RETURN u,n ORDER BY n.id,n.created_at DESC SKIP 10 LIMIT 100", $qb->getQuery('u', 'n'));
+    }
+
+    public function testRelationRange()
+    {
+        $relation = new Relation();
+        $relation->setRange('*');
+        $relation->setRange('*2');
+        $relation->setRange('*0..');
+        $relation->setRange('*1..10');
+        $relation->setRange('*10..34');
     }
 
     /**
@@ -80,5 +91,24 @@ class QueryBuilderTest extends \PHPUnit_Framework_TestCase
         $node = new Node();
         $node->relation();
         $node->relation();
+    }
+
+    /**
+     * @expectedException \MP\Cypher\QueryBuilderException
+     */
+    public function testRelationException()
+    {
+        $relation = new Relation();
+        $relation->node();
+        $relation->node();
+    }
+
+    /**
+     * @expectedException \MP\Cypher\QueryBuilderException
+     */
+    public function testRelationRangeException()
+    {
+        $relation = new Relation();
+        $relation->setRange('something bad');
     }
 }

@@ -5,14 +5,14 @@ namespace MP\Cypher;
 class Query
 {
     /**
-     * @var Query[]
+     * @var mixed[]
      */
     protected $parts = [];
 
     /**
-     * @param Query $part
+     * @param mixed $part
      */
-    protected function addPart(Query $part)
+    protected function addPart($part)
     {
         $this->parts[] = $part;
     }
@@ -22,8 +22,12 @@ class Query
      */
     public function getQuery()
     {
-        return implode(',', array_map(function (Query $part) {
-            return $part->getQuery();
+        return implode(',', array_map(function ($part) {
+            if ($part instanceof Query) {
+                return $part->getQuery();
+            }
+
+            return (string) $part;
         }, $this->parts));
     }
 }

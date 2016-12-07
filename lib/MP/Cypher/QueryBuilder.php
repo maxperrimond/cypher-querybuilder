@@ -64,15 +64,13 @@ class QueryBuilder
     }
 
     /**
-     * @param Query\OrderBy $orderBy
-     *
-     * @return QueryBuilder
+     * @return Query\OrderBy
      */
-    public function orderBy(Query\OrderBy $orderBy)
+    public function orderBy()
     {
-        $this->orderBy = $orderBy;
+        $this->orderBy = new Query\OrderBy();
 
-        return $this;
+        return $this->orderBy;
     }
 
     /**
@@ -117,7 +115,7 @@ class QueryBuilder
         $query .= " RETURN " . implode(',', $values);
 
         if ($this->orderBy) {
-            $query .= " {$this->where->getQuery()}";
+            $query .= " {$this->orderBy->getQuery()}";
         }
 
         if ($this->skip) {

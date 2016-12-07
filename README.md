@@ -20,9 +20,8 @@ use MP\Cypher\QueryBuilder;
 $qb = new QueryBuilder();
 
 $qb->addMatch()
-    ->node('u', 'user')
-    ->relation()
-    ->setWay(\MP\Cypher\Query\Relation::RIGHT)
+    ->addNode('u', 'user')
+    ->relation()->right()
     ->node('n');
 $qb->where()->expr("u.name = 'foo'");
 $qb->skip(10);
