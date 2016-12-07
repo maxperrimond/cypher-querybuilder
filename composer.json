@@ -1,5 +1,5 @@
 {
-    "name": "mp/cypher-querybuilder",
+    "name": "mper/cypher-querybuilder",
     "description": "Cypher QueryBuilder",
     "type": "library",
     "license": "MIT",
