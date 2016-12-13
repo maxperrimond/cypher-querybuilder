@@ -20,10 +20,5 @@
     },
     "autoload-dev": {
         "psr-4": { "MP\\Cypher\\": "tests/" }
-    },
-    "extra" : {
-        "branch-alias" : {
-            "dev-master" : "master-dev"
-        }
     }
 }
