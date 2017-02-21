@@ -92,6 +92,8 @@ class Node extends Query
                 $property = "$key:";
                 if (is_string($value)) {
                     $property .= "'$value'";
+                } else if (is_bool($value)) {
+                    $property .= $value ? 'true' : 'false';
                 } else {
                     $property .= "$value";
                 }
